@@ -1,0 +1,34 @@
+---
+name: PushDockerImage
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: SetUp Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.15.3'
+      - name: Install dependencies
+        run: |
+          go version
+          go get -u golang.org/x/lint/golint
+
+      - name: Run Build
+        run: go build .
+      
+      - name: Run vet & lint
+        run: |
+          go vet .
+          golint .
+
+      - name: Run test
+        run: go test -v 
